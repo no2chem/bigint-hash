@@ -1,0 +1,59 @@
+language: node_js
+sudo: false
+node_js:
+- node
+- '10'
+env:
+  global:
+  - DISPLAY=:99.0
+  - secure: bd9eiHEMLV3QtzdaZ4Ha7ZaNfE4ZMpVwpQp7vWZdDw7OhYNhV/01xPfAEfoAlAixieKCfj/0FlNZ3iE8ORpcQP1CONNKj5fvMqLkX6xT4/V9bAFjjQqPBdbPNugtCSh8w3c4CHmK/13LdsZf2//MqedCmFde0fROVr78MoRbn3VtBXaaEd3kGJcm2WH6QW3+c/AbgJDGqFN8+1MOt3t85sIBB43Mrp3segGy9FkgzPHwuocdqPyB/rGrOe4BexkgR6y4FnUWISQBg0Oz30w+NjCM3kXhhUXLgs/SSVVV1F3hetqM/llbwSm/1Nsf1aGaad9iShAHQMl2PTT0ydtHEYhg9MBkUTZEHCsrWh4r6pxKPsXSwXlxy1p7C72yG40VYJNKYQgLZo4rt4oKtgU1mXWm7+0jRiX5ku9qzgrBOhT5l7KcOvE3USlEZ2NsAJCjsS9OG4D0EwFTzIiRs26mgPmWjhJul7nbtC+UGjOLygCb+bkg99tgD8FYKMZDmWTil+4OF2ZMAuaB7nS2VeSJebahE0aKJktB3x/25gUMPYLDRj8i6AtGmYHWX4v8RFuukd+UU00nD9oURQD3lzervp3XQJ3hC6/E5DIeX6963A9VfT+3g723BRbEaHelVZ53AEgdcM2oA8SMc44tjfCscCRy1p2URTb+sjuW5zGDGNI=
+  - secure: epNIhCkJ/tsNSHdYGHSfW98Xbw2BgPy94Hqc0dgsobZfC1FPLSoMeyA5wRLjmdPS2WbeOkj3SPoiOt1dyeajqHEzKTf5Cu6fNK5eF/g52E+l73bKRKc+yuCVR3YAgku+4DnHVzIOxhP/boD6Z61mW+v7wG8F4T8MV/UnU4HUNeXbE90Q/TWbDMFWG7dxpjqBOl1hEuIJdz+N+c6Lde2SdYnBjFIJlXXz8C/MjBlX7Gya5f4sy9/I28v0HL9/QxH3Pc0c9gbq9f1c3mzzOpU0c/PUiB7eVnBYnT6bphRn1HdpyCPO2kLmHVSzjk1JeTCMZN+lhPhRISGVVuxKLFpKySYbGr2lIlFJTsqZlSgp10tJAjNVWO/ioqS14fwF6+SvazYx4etRP+gGfTUTV2Kuq8LL6TXcnvXMq0BfKUe6j5qgvHn1IIw+8IKS3yJfM0FkzaSamWNwN29td040314mMjMlk1Xy/e9o6WmjDEuz3/d16AzI+6e+mxir9Mgi2Q7QUV8NL3Al/TOFdUTmXkoOWpaPbP8fo1Brlw1oM1ff6zUdY8Svxa/gYsxA4TJP220DTQKMa8AVH8byjK4C3IvdahyHdQYbBq4fZCGKAJLb6rxreCioqT5MIV822id45hbMrngXQ2qLwisL3oc8UJlUUKNMjhM475bYUu2pOkpwICs=
+  matrix:
+  - TEST_SUITE=test:node
+addons:
+  chrome: stable
+cache:
+  directories:
+  - "$HOME/.npm"
+before_install:
+- sh -e /etc/init.d/xvfb start
+matrix:
+  fast_finish: true
+  include:
+  - os: linux
+    node_js: '10'
+    env: TEST_SUITE=test:browser
+script: npm run $TEST_SUITE
+before_deploy:
+- npm run typedoc
+- npm pack
+deploy:
+- provider: pages
+  skip-cleanup: true
+  github-token: "$GITHUB_TOKEN"
+  keep-history: true
+  local_dir: docs
+  committer-from-gh: true
+  on:
+    branch: master
+    node: '10'
+    condition: "$TEST_SUITE = test:node"
+- provider: releases
+  api_key: "$GITHUB_TOKEN"
+  file_glob: true
+  file: bigint-buffer-*.tgz
+  skip_cleanup: true
+  on:
+    branch: master
+    node: '10'
+    condition: "$TEST_SUITE = test:node"
+    tags: true
+- provider: npm
+  api_key: "$NPM_TOKEN"
+  skip_cleanup: true
+  email: mwei@cs.ucsd.edu
+  on:
+    branch: master
+    node: '10'
+    condition: "$TEST_SUITE = test:node"
+    tags: true

@@ -1,0 +1,3 @@
+[submodule "ext/xkcp"]
+	path = ext/xkcp
+	url = https://github.com/XKCP/XKCP.git
