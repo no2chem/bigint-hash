@@ -1,0 +1,247 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>bigint-hash</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">bigint-hash</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> bigint-hash</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="-bigint-hash-hashing-for-tc39-bigint-proposal">💪🔢🔒 bigint-hash: Hashing for TC39 BigInt Proposal</h1>
+				<p><a href="https://www.npmjs.org/package/bigint-hash"><img src="https://img.shields.io/npm/v/bigint-hash.svg?style=flat-square" alt="NPM Package"></a>
+					<a href="https://travis-ci.com/no2chem/bigint-hash"><img src="https://img.shields.io/travis/com/no2chem/bigint-hash.svg?branch=master&style=flat-square" alt="Build Status"></a>
+					<a href="https://coveralls.io/r/no2chem/bigint-hash"><img src="https://img.shields.io/coveralls/no2chem/bigint-hash.svg?style=flat-square" alt="Coverage Status"></a>
+				<img src="https://img.shields.io/node/v/bigint-hash.svg?style=flat-square" alt="node"></p>
+				<p><a href="https://www.npmjs.org/package/bigint-hash">bigint-hash</a> provides common hashing routines (MD5, SHA, SHA-2, SHA-3, Keccak) that use N-API routines to return <a href="https://github.com/tc39/proposal-bigint">TC39 Proposed BigInts</a> as digests instead of Buffers, strings or
+					Uint8Arrays. BigInts are especially useful in the context of hashes because they can be compared 10-100x faster than
+					buffers (see <a href="https://github.com/no2chem/bigint-buffer#why-use-bigints">here</a>). In addition, bigints are
+					managed much more efficiently than Buffers, which are allocated outside the V8 heap. bigint-hash also provides routines
+					which are optimized for the common case of hashing a single buffer. As a result, this library is about
+					5x faster than Node.js&#39;s built in <a href="https://nodejs.org/api/crypto.html">crypto API</a>, even though the same underlying
+					OpenSSL library is used. In the browser, bigint-hash falls back to polyfills provided for crypto libraries.
+				bigint-hash aims for:</p>
+				<ul>
+					<li><p><strong>Drop-in compatibility with Node.js&#39;s crypto API.</strong>  While we don&#39;t support stream functionality yet, in most cases you
+						can replace references to Node.js&#39;s API with bigint-hash.</p>
+					</li>
+					<li><p><strong>High performance.</strong> bigint-hash aims to be the fastest way to obtain a hash in Node.js, using N-API bindings to
+						optimized libraries whenever possible. This results in up to a 7x speedup over existing libraries.</p>
+					</li>
+					<li><p><strong>Support for a wide variety of hash algorithms.</strong> bigint-hash currently supports MD5 and the SHA-1, SHA-2 family of
+							hashing algorithms (with OpenSSL) and SHA-3 and Keccak (through the eXtended Keccak Code Package). More algorithms may
+						be supported in the future.</p>
+					</li>
+				</ul>
+				<h1 id="usage">Usage</h1>
+				<p>Install via <a href="(https://www.npmjs.org/package/bigint-hash)">NPM</a>:</p>
+				<pre><code><span class="hljs-meta">&gt;</span><span class="bash"> npm install --save bigint-hash</span></code></pre><p>To get a Hash instance, use the <code>getHasher</code> function with a supported hash algorithm. You can find supported
+					types in the documentation for the <a href="https://no2chem.github.io/bigint-hash/hashtype.html">HashType enum</a>, or
+				you can pass most OpenSSL algorithm names (like <code>&#39;sha256&#39;</code>).</p>
+				<pre><code><span class="hljs-keyword">import</span> {getHasher, OutputType, HashType} <span class="hljs-keyword">from</span> <span class="hljs-string">'bigint-hash'</span>;
+
+<span class="hljs-comment">// As with Node.js crypto API</span>
+getHasher(HashType.SHA1).update(Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>)).digest();
+
+<span class="hljs-comment">// To get a bigInt, use either:</span>
+getHasher(HashType.SHA1).update(Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>)).digest(OutputType.BigInt);
+getHasher(HashType.SHA1).update(Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>)).digestAsBigInt();</code></pre><p>Only hashing a single buffer? Use the one-shot API for better performance:</p>
+				<pre><code><span class="hljs-keyword">import</span> {hashAsBigInt, hashAsBuffer} <span class="hljs-keyword">from</span> <span class="hljs-string">'bigint-hash'</span>;
+
+hashAsBigInt(HashType.SHA1, Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>));
+hashAsBuffer(HashType.SHA1, Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>));</code></pre><h1 id="performance">Performance</h1>
+				<p>So how does it all perform? Benchmarks can be run by using <code>npm run benchmark</code>.</p>
+				<p>For example, for SHA256:</p>
+				<pre><code>Running SHA256...
+<span class="hljs-keyword">node</span>-crypto-buf:<span class="hljs-title"> 274981</span>±<span class="hljs-number">6.02</span>% ops/s <span class="hljs-number">3636.62</span>±<span class="hljs-number">893.055</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">64</span> runs)
+<span class="hljs-keyword">node</span>-crypto-bigint:<span class="hljs-title"> 267242</span>±<span class="hljs-number">5.91</span>% ops/s <span class="hljs-number">3741.93</span>±<span class="hljs-number">930.464</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">68</span> runs)
+biginthash-buf: <span class="hljs-number">403311</span>±<span class="hljs-number">13.51</span>% ops/s <span class="hljs-number">2479.48</span>±<span class="hljs-number">1439.719</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">71</span> runs)
+biginthash-bigint: <span class="hljs-number">505348</span>±<span class="hljs-number">34.12</span>% ops/s <span class="hljs-number">1978.83</span>±<span class="hljs-number">2733.946</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">63</span> runs)
+biginthash-oneshot-bigint: <span class="hljs-number">1010083</span>±<span class="hljs-number">0.65</span>% ops/s <span class="hljs-number">990.02</span>±<span class="hljs-number">31.829</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">93</span> runs)
+biginthash-oneshot-buffer: <span class="hljs-number">591309</span>±<span class="hljs-number">1.96</span>% ops/s <span class="hljs-number">1691.16</span>±<span class="hljs-number">155.995</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">85</span> runs)
+Fastest is biginthash-oneshot-bigint</code></pre><p>Here, <code>node-crypto-buf</code> is the standard Node.js API, and <code>node-crypto-bigint</code> is that same API
+				with the overhead of converting to a bigint (using <a href="https://github.com/no2chem/bigint-buffer">bigint-buffer</a>).</p>
+				<p>Doing the conversion to bigint natively, <code>biginthash-bigint</code>, results in 1.8x better performance. Interestingly,
+					<code>biginthash-buf</code>, which calls OpenSSL and should perform the same as <code>node-crypto-buf</code>, performs 1.4x better, which
+				should be investigated. </p>
+				<p>Using the one-shot API <code>biginthash-oneshot-bigint</code> yields about 3.4x better performance, thanks to not having to
+				allocate an external context to hold hashing state and schedule garbage collection.</p>
+				<p>For SHA3, we compare against the widely used <a href="https://github.com/cryptocoinjs/keccak">keecak</a> library.</p>
+				<pre><code>Running SHA3_256...
+sha3-buf: <span class="hljs-number">140667±13.36</span>% ops/s <span class="hljs-number">7108</span>.<span class="hljs-number">97</span>±<span class="hljs-number">4278.996</span> ns/op (<span class="hljs-number">78</span> runs)
+sha3-bigint: <span class="hljs-number">146018±1.24</span>% ops/s <span class="hljs-number">6848</span>.<span class="hljs-number">49</span>±<span class="hljs-number">395.861</span> ns/op (<span class="hljs-number">84</span> runs)
+biginthash-buf: <span class="hljs-number">365119±8.46</span>% ops/s <span class="hljs-number">2738</span>.<span class="hljs-number">83±1010.152</span> ns/op (<span class="hljs-number">73</span> runs)
+biginthash-bigint: <span class="hljs-number">450430±29</span>.<span class="hljs-number">27</span>% ops/s <span class="hljs-number">2220</span>.<span class="hljs-number">10±2652.172</span> ns/op (<span class="hljs-number">64</span> runs)
+biginthash-oneshot-bigint: <span class="hljs-number">1010901±0</span>.<span class="hljs-number">34</span>% ops/s <span class="hljs-number">989.22±16</span>.<span class="hljs-number">845</span> ns/op (<span class="hljs-number">94</span> runs)
+biginthash-oneshot-buffer: <span class="hljs-number">584744±1</span>.<span class="hljs-number">52</span>% ops/s <span class="hljs-number">1710.15±123</span>.<span class="hljs-number">457</span> ns/op (<span class="hljs-number">87</span> runs)
+Fastest is biginthash-oneshot-bigint</code></pre><p><code>biginthash-oneshot-bigint</code> performs 7x faster than the <code>sha3-buf</code>, which just uses the <code>keccak</code> library. 
+					Even <code>biginthash-buf</code> performs 2.6x better than <code>sha3-buf</code>. This is because bigint-hash uses an optimized version
+				from the eXtended Keccak Code Package, while keccak uses the reference implementation.</p>
+				<p>There&#39;s also a significant amount of noise in the non-oneshot APIs. This is probably due to garbage collection overheads,
+					as the Hasher must allocate temporary state, the noise is probably due to garbage collection kicking in much more frequently.
+				With the oneshot API there is significantly less noise, as less garbage is generated in the first place.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="enums/hashtype.html" class="tsd-kind-icon">Hash<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/inputencoding.html" class="tsd-kind-icon">Input<wbr>Encoding</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/outputtype.html" class="tsd-kind-icon">Output<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/keccakhasher.html" class="tsd-kind-icon">Keccak<wbr>Hasher</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/opensslhasher.html" class="tsd-kind-icon">Openssl<wbr>Hasher</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/hash.html" class="tsd-kind-icon">Hash</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#gethasher" class="tsd-kind-icon">get<wbr>Hasher</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#hashasbigint" class="tsd-kind-icon">hash<wbr>AsBig<wbr>Int</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#hashasbuffer" class="tsd-kind-icon">hash<wbr>AsBuffer</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
