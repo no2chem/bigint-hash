@@ -31,8 +31,10 @@ Install via [NPM]((https://www.npmjs.org/package/bigint-hash)):
 > npm install --save bigint-hash
 ```
 
+You can find API documentation [here](https://no2chem.github.io/bigint-hash).
+
 To get a Hash instance, use the `getHasher` function with a supported hash algorithm. You can find supported
-types in the documentation for the [HashType enum](https://no2chem.github.io/bigint-hash/hashtype.html), or
+types in the documentation for the [HashType enum](https://no2chem.github.io/bigint-hash/enums/hashtype.html), or
 you can pass most OpenSSL algorithm names (like `'sha256'`).
 ```
 import {getHasher, OutputType, HashType} from 'bigint-hash';

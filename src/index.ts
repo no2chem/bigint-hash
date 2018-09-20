@@ -72,34 +72,87 @@ export interface Hash {
   update(data: string|Buffer, inputEncoding?: InputEncoding): Hash;
 }
 
+/**
+ * Represents a string that can be passed to request a supported hashing
+ * algorithm.
+ */
 export enum HashType {
+  /**
+   * MD5, 128-bit digest as specified in RFC 1321. "Cryptographically broken
+   * and unsuitable for further use."
+   */
   MD5 = 'md5',
+  /** SHA-1, a 160-bit digest. No longer considered secure. */
   SHA1 = 'sha1',
+  /** SHA-224, a 224-bit digest from the SHA-2 family. */
   SHA224 = 'sha224',
+  /** SHA-256, a 256-bit digest from the SHA-2 family. */
   SHA256 = 'sha256',
+  /** SHA-384, a 384-bit digest from the SHA-2 family. */
   SHA384 = 'sha384',
+  /** SHA-512, a 512-bit digest from the SHA-2 family. */
   SHA512 = 'sha512',
+  /**
+   * SHA3-224, a 224-bit digest using the Keccak family, with 0x6 used for
+   * padding.
+   */
   SHA3_224 = 'sha3-224',
+  /**
+   * SHA3-256, a 256-bit digest using the Keccak family, with 0x6 used for
+   * padding.
+   */
   SHA3_256 = 'sha3-256',
+  /**
+   * SHA3-384, a 384-bit digest using the Keccak family, with 0x6 used for
+   * padding.
+   */
   SHA3_384 = 'sha3-384',
+  /**
+   * SHA3-512, a 512-bit digest using the Keccak family, with 0x6 used for
+   * padding.
+   */
   SHA3_512 = 'sha3-512',
+  /**
+   * Keccak224, a 224-bit digest using the Keccak family, with 0x0 used for
+   * padding.
+   */
   KECCAK224 = 'keccak224',
+  /**
+   * Keccak256, a 256-bit digest using the Keccak family, with 0x0 used for
+   * padding. Commonly used for Ethereum.
+   */
   KECCAK256 = 'keccak256',
+  /**
+   * Keccak384, a 384-bit digest using the Keccak family, with 0x0 used for
+   * padding.
+   */
   KECCAK384 = 'keccak384',
+  /**
+   * Keccak512, a 512-bit digest using the Keccak family, with 0x0 used for
+   * padding.
+   */
   KECCAK512 = 'keccak512'
 }
 
+/** Reperesents the types of input encoding which may be used by a string. */
 export enum InputEncoding {
+  /** UTF-8, the default encoding */
   UTF8 = 'utf8',
+  /** ASCII, without UTF-8 extensions. */
   ASCII = 'ascii',
+  /** Latin 1, as specified in ISO-8859-1 */
   LATIN1 = 'latin1'
 }
 
+/** Reperesents the permitted set of output types for a digest. */
 export enum OutputType {
+  /** Output a bigint digest. */
   BigInt = 'bigint',
+  /** Output a buffer digest. */
   Buffer = 'buffer'
 }
 
+/** An internal hasher which calls OpenSSL. Do not use directly. */
 export class OpensslHasher implements Hash {
   private disposed = false;
   static getOpensslType(hash: HashType): OpenSSLHashType {
@@ -168,6 +221,10 @@ export class OpensslHasher implements Hash {
   }
 }
 
+/**
+ * An internal hasher which calls the eXtended Keccak Code Package. Do not use
+ * directly.
+ */
 export class KeccakHasher implements Hash {
   private disposed = false;
   static getKeccakType(hash: HashType): KeccakHashType {
@@ -248,6 +305,15 @@ export class KeccakHasher implements Hash {
   }
 }
 
+/**
+ * Obtain a hasher instance for hashing. If you will only hash a single buffer,
+ *  call the [[hashAsBigInt]] or [[hashAsBuffer]] functions instead, as they
+ *  yield better performance.
+ *
+ *  @param hash The type of algorithm to support
+ *
+ *  @returns A [[Hash]] instance for hashing.
+ */
 export function getHasher(hash: HashType): Hash {
   switch (hash) {
     case HashType.MD5:
@@ -271,7 +337,16 @@ export function getHasher(hash: HashType): Hash {
   }
 }
 
-export function hashAsBigInt(hash: HashType, buf: Buffer): BigInt {
+/**
+ * Hash the given buffer using the hashing algorithm specified, returning
+ *  the digest as a bigint.
+ *
+ *  @param hash The hash algorithm to use.
+ *  @param buf  The buffer to use.
+ *
+ *  @returns A bigint with the message digest.
+ */
+export function hashAsBigInt(hash: HashType, buf: Buffer): bigint {
   switch (hash) {
     case HashType.MD5:
     case HashType.SHA1:
@@ -302,6 +377,15 @@ export function hashAsBigInt(hash: HashType, buf: Buffer): BigInt {
   }
 }
 
+/**
+ * Hash the given buffer using the hashing algorithm specified, returning
+ *  the digest as a Buffer.
+ *
+ *  @param hash The hash algorithm to use.
+ *  @param buf  The buffer to use.
+ *
+ *  @returns A buffer with the message digest.
+ */
 export function hashAsBuffer(hash: HashType, buf: Buffer): Buffer {
   switch (hash) {
     case HashType.MD5:
