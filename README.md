@@ -17,7 +17,8 @@ bigint-hash aims for:
 can replace references to Node.js's API with bigint-hash.
 
 - __High performance.__ bigint-hash aims to be the fastest way to obtain a hash in Node.js, using N-API bindings to
-optimized libraries whenever possible. This results in up to a 7x speedup over existing libraries.
+optimized libraries whenever possible. This results in up to a 7x speedup over existing libraries, even when
+not using bigint. See benchmarks [here](https://github.com/no2chem/bigint-hash#performance).
 
 - __Support for a wide variety of hash algorithms.__ bigint-hash currently supports MD5 and the SHA-1, SHA-2 family of
 hashing algorithms (with OpenSSL) and SHA-3 and Keccak (through the eXtended Keccak Code Package). More algorithms may
