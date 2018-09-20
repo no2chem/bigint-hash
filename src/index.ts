@@ -6,7 +6,7 @@ declare var process: {browser: boolean;};
 declare type OpenSSLHandle = {};
 interface OpenSSLInterface {
   getHashHandle(type: OpenSSLHashType): OpenSSLHandle;
-  getHashDigestBigInt(handle: OpenSSLHandle): BigInt;
+  getHashDigestBigInt(handle: OpenSSLHandle): bigint;
   getHashDigestBuffer(handle: OpenSSLHandle): Buffer;
   hashBuffer(handle: OpenSSLHandle, buf: Buffer): void;
   hashBufferOneshotBigInt(type: OpenSSLHashType, buf: Buffer): bigint;
@@ -16,7 +16,7 @@ interface OpenSSLInterface {
 declare type KeccakHandle = {};
 interface KeccakInterface {
   getHashHandle(type: KeccakHashType): KeccakHandle;
-  getHashDigestBigInt(handle: KeccakHandle, type: KeccakHashType): BigInt;
+  getHashDigestBigInt(handle: KeccakHandle, type: KeccakHashType): bigint;
   getHashDigestBuffer(handle: KeccakHandle, type: KeccakHashType): Buffer;
   hashBuffer(handle: KeccakHandle, buf: Buffer): void;
   hashBufferOneshotBigInt(type: KeccakHashType, buf: Buffer): bigint;
@@ -67,8 +67,8 @@ if (!process.browser) {
 }
 
 export interface Hash {
-  digest(output?: OutputType): Buffer|string|BigInt;
-  digestBigInt(): BigInt;
+  digest(output?: OutputType): Buffer|string|bigint;
+  digestBigInt(): bigint;
   update(data: string|Buffer, inputEncoding?: InputEncoding): Hash;
 }
 
@@ -200,8 +200,8 @@ export class OpensslHasher implements Hash {
     }
   }
 
-  digestBigInt(): BigInt {
-    return this.digest(OutputType.BigInt) as BigInt;
+  digestBigInt(): bigint {
+    return this.digest(OutputType.BigInt) as bigint;
   }
 
   update(data: string|Buffer, inputEncoding?: InputEncoding): Hash {
@@ -284,8 +284,8 @@ export class KeccakHasher implements Hash {
     }
   }
 
-  digestBigInt(): BigInt {
-    return this.digest(OutputType.BigInt) as BigInt;
+  digestBigInt(): bigint {
+    return this.digest(OutputType.BigInt) as bigint;
   }
 
   update(data: string|Buffer, inputEncoding?: InputEncoding): Hash {
