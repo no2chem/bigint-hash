@@ -21,6 +21,18 @@
           "OTHER_CFLAGS": [
             "-Wno-unused-function", "-march=native"
      ]},
+  }, {
+   "target_name": "xxhash",
+    "sources": [
+      "src/xxhash-napi.c",
+      "ext/xxHash/xxhash.c",
+    ], "include_dirs": 
+    ['ext/xxHash/'],
+    "cflags" : [ "-Wno-unused-function" , "-march=native"],
+      "xcode_settings": {
+          "OTHER_CFLAGS": [
+            "-Wno-unused-function", "-march=native"
+     ]},
   }
   ]    
 }

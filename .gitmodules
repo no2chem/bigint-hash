@@ -1,3 +1,6 @@
 [submodule "ext/xkcp"]
 	path = ext/xkcp
 	url = https://github.com/XKCP/XKCP.git
+[submodule "ext/xxHash"]
+	path = ext/xxHash
+	url = https://github.com/Cyan4973/xxHash.git

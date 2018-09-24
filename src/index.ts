@@ -23,6 +23,17 @@ interface KeccakInterface {
   hashBufferOneshotBuffer(type: KeccakHashType, buf: Buffer): Buffer;
 }
 
+declare type XxHashHandle = {};
+interface XxHashInterface {
+  getHashHandle(type: XxHashType): KeccakHandle;
+  getHashDigestBigInt(handle: XxHashHandle, type: XxHashType): bigint;
+  getHashDigestBuffer(handle: XxHashHandle, type: XxHashType): Buffer;
+  hashBuffer(handle: XxHashHandle, type: XxHashType, buf: Buffer): void;
+  hashBufferOneshotBigInt(type: XxHashType, buf: Buffer): bigint;
+  hashBufferOneshotBuffer(type: XxHashType, buf: Buffer): Buffer;
+}
+
+
 enum OpenSSLHashType {
   OPENSSL_MD5 = 0,
   OPENSSL_MD4 = 1,
@@ -46,15 +57,23 @@ enum KeccakHashType {
   SHA3_512 = 7
 }
 
+enum XxHashType {
+  xxHash64 = 0,
+  xxHash32 = 1
+}
 let libopenssl: OpenSSLInterface;
 let libkeccak: KeccakInterface;
+let libxxhash: XxHashInterface;
+
 let keccak: (hashName: string) => crypto.Hash;
 let fallback = process.browser;
+const xxhashjs = require('xxhashjs');
 
 if (!process.browser) {
   try {
     libopenssl = require('bindings')('openssl');
     libkeccak = require('bindings')('keccak');
+    libxxhash = require('bindings')('xxhash');
   } catch (e) {
     console.warn(e);
     console.warn(
@@ -131,7 +150,17 @@ export enum HashType {
    * Keccak512, a 512-bit digest using the Keccak family, with 0x0 used for
    * padding.
    */
-  KECCAK512 = 'keccak512'
+  KECCAK512 = 'keccak512',
+  /**
+   * xxHash64, a extremely fast non-cryptographic hash algorithm with a 64-bit
+   * digest.
+   */
+  xxHash64 = 'xxHash64',
+  /**
+   * xxHash32, a extremely fast non-cryptographic hash algorithm with a 32-bit
+   * digest.
+   */
+  xxHash32 = 'xxHash32'
 }
 
 /** Reperesents the types of input encoding which may be used by a string. */
@@ -305,6 +334,80 @@ export class KeccakHasher implements Hash {
   }
 }
 
+
+/**
+ * An internal hasher which calls xxHash. Do not use
+ * directly.
+ */
+export class XxHasher implements Hash {
+  private disposed = false;
+  static getXxHashType(hash: HashType): XxHashType {
+    switch (hash) {
+      case HashType.xxHash64:
+        return XxHashType.xxHash64;
+      case HashType.xxHash32:
+        return XxHashType.xxHash32;
+      default:
+        throw new Error(`Unsupported hash type ${hash}`);
+    }
+  }
+
+  constructor(
+      hash: HashType, private xxType = XxHasher.getXxHashType(hash),
+      private xxHandle = fallback ?
+          hash === HashType.xxHash64 ? xxhashjs.h64(0) : xxhashjs.h32(0) :
+          libxxhash.getHashHandle(xxType)) {}
+
+  digest(output: OutputType = OutputType.Buffer) {
+    if (this.disposed) {
+      throw new Error('Digest a disposed hasher');
+    }
+    this.disposed = true;
+    if (fallback) {
+      switch (output) {
+        case OutputType.BigInt:
+          return BigInt(`0x${this.xxHandle.digest().toString(16)}`);
+        case OutputType.Buffer:
+          let str = this.xxHandle.digest().toString(16) as string;
+          if (str.length % 2 !== 0) {
+            str = str.padStart(str.length + 1, '0');
+          }
+          return Buffer.from(str, 'hex');
+        default:
+          throw new Error('Unsupported output type');
+      }
+    }
+    switch (output) {
+      case OutputType.BigInt:
+        return libxxhash.getHashDigestBigInt(this.xxHandle, this.xxType);
+      case OutputType.Buffer:
+        return libxxhash.getHashDigestBuffer(this.xxHandle, this.xxType);
+      default:
+        throw new Error('Unsupported output type');
+    }
+  }
+
+  digestBigInt(): bigint {
+    return this.digest(OutputType.BigInt) as bigint;
+  }
+
+  update(data: string|Buffer, inputEncoding?: InputEncoding): Hash {
+    if (this.disposed) {
+      throw new Error('Updating a disposed hasher');
+    }
+    if ((data as Buffer).byteLength === undefined) {
+      // this is a string
+      data = Buffer.from(data as string, inputEncoding);
+    }
+    if (fallback) {
+      this.xxHandle.update(data);
+    } else {
+      libxxhash.hashBuffer(this.xxHandle, this.xxType, data as Buffer);
+    }
+    return this;
+  }
+}
+
 /**
  * Obtain a hasher instance for hashing. If you will only hash a single buffer,
  *  call the [[hashAsBigInt]] or [[hashAsBuffer]] functions instead, as they
@@ -332,6 +435,9 @@ export function getHasher(hash: HashType): Hash {
     case HashType.KECCAK384:
     case HashType.KECCAK512:
       return new KeccakHasher(hash);
+    case HashType.xxHash64:
+    case HashType.xxHash32:
+      return new XxHasher(hash);
     default:
       throw new Error(`Unsupported hash type!`);
   }
@@ -372,6 +478,18 @@ export function hashAsBigInt(hash: HashType, buf: Buffer): bigint {
       }
       return libkeccak.hashBufferOneshotBigInt(
           KeccakHasher.getKeccakType(hash), buf);
+    case HashType.xxHash64:
+      if (fallback) {
+        return BigInt(`0x${xxhashjs.h64().update(buf).digest().toString(16)}`);
+      }
+      return libxxhash.hashBufferOneshotBigInt(
+          XxHasher.getXxHashType(hash), buf);
+    case HashType.xxHash32:
+      if (fallback) {
+        return BigInt(`0x${xxhashjs.h32().update(buf).digest().toString(16)}`);
+      }
+      return libxxhash.hashBufferOneshotBigInt(
+          XxHasher.getXxHashType(hash), buf);
     default:
       throw new Error(`Unsupported hash type!`);
   }
@@ -412,6 +530,20 @@ export function hashAsBuffer(hash: HashType, buf: Buffer): Buffer {
       }
       return libkeccak.hashBufferOneshotBuffer(
           KeccakHasher.getKeccakType(hash), buf);
+    case HashType.xxHash64:
+      if (fallback) {
+        return Buffer.from(
+            xxhashjs.h64().update(buf).digest().toString(16), 'hex');
+      }
+      return libxxhash.hashBufferOneshotBuffer(
+          XxHasher.getXxHashType(hash), buf);
+    case HashType.xxHash32:
+      if (fallback) {
+        return Buffer.from(
+            xxhashjs.h32().update(buf).digest().toString(16), 'hex');
+      }
+      return libxxhash.hashBufferOneshotBuffer(
+          XxHasher.getXxHashType(hash), buf);
     default:
       throw new Error(`Unsupported hash type!`);
   }

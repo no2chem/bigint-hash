@@ -88,6 +88,17 @@ describe('Try empty hashes - BigInt', () => {
         BigInt(
             '0xa69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26'));
   });
+
+  it('should have a valid empty xxHash32', () => {
+    assertEquals(
+        getHasher(HashType.xxHash32).digestBigInt(), BigInt('0x2cc5d05'));
+  });
+
+  it('should have a valid empty xxHash64', () => {
+    assertEquals(
+        getHasher(HashType.xxHash64).digestBigInt(),
+        BigInt('0xef46db3751d8e999'));
+  });
 });
 
 
@@ -156,6 +167,17 @@ describe('Try empty hashes - OneShot BigInt', () => {
         hashAsBigInt(HashType.SHA3_512, Buffer.from([])),
         BigInt(
             '0xa69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26'));
+  });
+
+  it('should have a valid empty xxHash32', () => {
+    assertEquals(
+        hashAsBigInt(HashType.xxHash32, Buffer.from([])), BigInt('0x2cc5d05'));
+  });
+
+  it('should have a valid empty xxHash64', () => {
+    assertEquals(
+        hashAsBigInt(HashType.xxHash64, Buffer.from([])),
+        BigInt('0xef46db3751d8e999'));
   });
 });
 
@@ -236,6 +258,18 @@ describe('Try empty hashes - Buffer', () => {
         .should.deep.equal(Buffer.from(
             'a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26',
             'hex'));
+  });
+
+  it('should have a valid empty xxHash32', () => {
+    getHasher(HashType.xxHash32)
+        .digest()
+        .should.deep.equal(Buffer.from('02cc5d05', 'hex'));
+  });
+
+  it('should have a valid empty xxHash64', () => {
+    getHasher(HashType.xxHash64)
+        .digest()
+        .should.deep.equal(Buffer.from('ef46db3751d8e999', 'hex'));
   });
 });
 
@@ -325,5 +359,21 @@ describe('Try helloworld hash - BigInt', () => {
             .digestBigInt(),
         BigInt(
             '0x938315ec7b0e0bcac648ae6f732f67e00f9c6caa3991627953434a0769b0bbb15474a429177013ed8a7e48990887d1e19533687ed2183fd2b6054c2e8828ca1c'));
+  });
+
+  it('should have a valid xxHash32', () => {
+    assertEquals(
+        getHasher(HashType.xxHash32)
+            .update(Buffer.from('helloworld'))
+            .digestBigInt(),
+        BigInt('0x2362e202'));
+  });
+
+  it('should have a valid xxHash64', () => {
+    assertEquals(
+        getHasher(HashType.xxHash64)
+            .update(Buffer.from('helloworld'))
+            .digestBigInt(),
+        BigInt('0x80111601aa1c6a4f'));
   });
 });

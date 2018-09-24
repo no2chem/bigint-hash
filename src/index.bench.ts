@@ -5,6 +5,9 @@ import * as crypto from 'crypto';
 import {getHasher, hashAsBigInt, hashAsBuffer, HashType} from './index';
 
 const keccak = require('keccak');
+const xxhashjs = require('xxhashjs');
+const xxhash = require('xxhash');
+
 interface BenchmarkRun {
   name: string;
   hz: number;
@@ -43,6 +46,65 @@ let suite = new benchmark.Suite();
 // Tests the performance of a no-op.
 suite.add('no-op', () => {});
 runSuite(suite, 'basic');
+
+
+// Test the performance of xxHash64 under various schemes
+suite = new benchmark.Suite('xxHash32');
+suite.add('xxhash-node', () => {
+  const hasher = new xxhash(0);
+  hasher.update(Buffer.from('helloworld'));
+  hasher.digest();
+});
+suite.add('xxhashjs-digest', () => {
+  xxhashjs.h32(0).update(Buffer.from('helloworld')).digest();
+});
+suite.add('xxhashjs-oneshot', () => {
+  xxhashjs.h32(Buffer.from('helloworld'), 0);
+});
+suite.add('biginthash-buf', () => {
+  getHasher(HashType.xxHash32).update(Buffer.from('hello world')).digest();
+});
+suite.add('biginthash-bigint', () => {
+  getHasher(HashType.xxHash32)
+      .update(Buffer.from('hello world'))
+      .digestBigInt();
+});
+suite.add('biginthash-oneshot-bigint', () => {
+  hashAsBigInt(HashType.xxHash32, Buffer.from('hello world'));
+});
+suite.add('biginthash-oneshot-buffer', () => {
+  hashAsBuffer(HashType.xxHash32, Buffer.from('hello world'));
+});
+runSuite(suite, 'xxHash32');
+
+// Test the performance of xxHash64 under various schemes
+suite = new benchmark.Suite('xxHash64');
+suite.add('xxhash-node', () => {
+  const hasher = new xxhash.XXHash64(0);
+  hasher.update(Buffer.from('helloworld'));
+  hasher.digest();
+});
+suite.add('xxhashjs-digest', () => {
+  xxhashjs.h64(0).update(Buffer.from('helloworld')).digest();
+});
+suite.add('xxhashjs-oneshot', () => {
+  xxhashjs.h64(Buffer.from('helloworld'), 0);
+});
+suite.add('biginthash-buf', () => {
+  getHasher(HashType.xxHash64).update(Buffer.from('hello world')).digest();
+});
+suite.add('biginthash-bigint', () => {
+  getHasher(HashType.xxHash64)
+      .update(Buffer.from('hello world'))
+      .digestBigInt();
+});
+suite.add('biginthash-oneshot-bigint', () => {
+  hashAsBigInt(HashType.xxHash64, Buffer.from('hello world'));
+});
+suite.add('biginthash-oneshot-buffer', () => {
+  hashAsBuffer(HashType.xxHash64, Buffer.from('hello world'));
+});
+runSuite(suite, 'xxHash64');
 
 // Test the performance of md5 under various schemes
 suite = new benchmark.Suite('md5');

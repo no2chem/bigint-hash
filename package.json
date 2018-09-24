@@ -1,6 +1,6 @@
 {
   "name": "bigint-hash",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Common hashing functions with bigint support",
   "main": "dist/node.js",
   "browser": {
@@ -45,12 +45,14 @@
     "sha3",
     "crypto",
     "tc39-bigint",
-    "napi"
+    "napi",
+    "xxHash"
   ],
   "license": "Apache-2.0",
   "dependencies": {
+    "bigint-buffer": "^1.1.2",
     "bindings": "^1.3.0",
-    "bigint-buffer": "^1.1.2"
+    "xxhashjs": "^0.2.2"
   },
   "devDependencies": {
     "@types/benchmark": "^1.0.31",
@@ -79,8 +81,10 @@
     "typedoc": "^0.12.0",
     "typescript": "calebsander/TypeScript#feature/bigint-lkg",
     "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0"
-  },  "files": [
+    "webpack-cli": "^3.1.0",
+    "xxhash": "^0.2.4"
+  },
+  "files": [
     "/dist",
     "/ext/xkcp/lib/high/Keccak",
     "/ext/xkcp/lib/low/KeccakP-1600/Optimized64/KeccakP-1600-opt64.c",

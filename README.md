@@ -4,7 +4,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/no2chem/bigint-hash.svg?style=flat-square)](https://coveralls.io/r/no2chem/bigint-hash)
 ![node](https://img.shields.io/node/v/bigint-hash.svg?style=flat-square)
 
-[bigint-hash](https://www.npmjs.org/package/bigint-hash) provides common hashing routines (MD5, SHA, SHA-2, SHA-3, Keccak) that use N-API routines to return [TC39 Proposed BigInts](https://github.com/tc39/proposal-bigint) as digests instead of Buffers, strings or
+[bigint-hash](https://www.npmjs.org/package/bigint-hash) provides common hashing routines (MD5, SHA, SHA-2, SHA-3, Keccak, xxHash) that use N-API routines to return [TC39 Proposed BigInts](https://github.com/tc39/proposal-bigint) as digests instead of Buffers, strings or
 Uint8Arrays. BigInts are especially useful in the context of hashes because they can be compared 10-100x faster than
 buffers (see [here](https://github.com/no2chem/bigint-buffer#why-use-bigints)). In addition, bigints are
 managed much more efficiently than Buffers, which are allocated outside the V8 heap. bigint-hash also provides routines
@@ -18,11 +18,11 @@ can replace references to Node.js's API with bigint-hash.
 
 - __High performance.__ bigint-hash aims to be the fastest way to obtain a hash in Node.js, using N-API bindings to
 optimized libraries whenever possible. This results in up to a 7x speedup over existing libraries, even when
-not using bigint. See benchmarks [here](https://github.com/no2chem/bigint-hash#performance).
+not using bigint. With xxHash, we can hash at ~2.5M hashes/second. See benchmarks [here](https://github.com/no2chem/bigint-hash#performance).
 
-- __Support for a wide variety of hash algorithms.__ bigint-hash currently supports MD5 and the SHA-1, SHA-2 family of
-hashing algorithms (with OpenSSL) and SHA-3 and Keccak (through the eXtended Keccak Code Package). More algorithms may
-be supported in the future.
+- __Support for a wide variety of hash algorithms.__ bigint-hash currently supports MD5, the SHA-1, SHA-2 family of
+hashing algorithms (with OpenSSL) and SHA-3 and Keccak (through the eXtended Keccak Code Package). We also now support
+xxHash, an extremely fast non-cryptographic hash algorithm. More algorithms may be supported in the future.
 
 # Usage
 
@@ -100,3 +100,20 @@ from the eXtended Keccak Code Package, while keccak uses the reference implement
 There's also a significant amount of noise in the non-oneshot APIs. This is probably due to garbage collection overheads,
 as the Hasher must allocate temporary state, the noise is probably due to garbage collection kicking in much more frequently. 
 With the oneshot API there is significantly less noise, as less garbage is generated in the first place.
+
+Version 0.2.0 introduced support for xxHash. This provides very fast (but non-cryptographic hashes):
+
+```
+Running xxHash64...
+xxhash-node: 470517±8.23% ops/s 2125.32±697.178 ns/op (61 runs)
+xxhashjs-digest: 148855±1.42% ops/s 6717.97±460.271 ns/op (90 runs)
+xxhashjs-oneshot: 142618±2.80% ops/s 7011.76±927.270 ns/op (86 runs)
+biginthash-buf: 423390±17.42% ops/s 2361.89±1625.679 ns/op (60 runs)
+biginthash-bigint: 738984±21.47% ops/s 1353.21±1204.176 ns/op (66 runs)
+biginthash-oneshot-bigint: 2435419±1.67% ops/s 410.61±32.956 ns/op (89 runs)
+biginthash-oneshot-buffer: 762413±11.00% ops/s 1311.62±658.480 ns/op (80 runs)
+Fastest is biginthash-oneshot-bigint
+```
+
+Interestingly, the bigint version is 3x more performant than the buffer version, highlighting
+how much more buffer allocation costs over bigints.
