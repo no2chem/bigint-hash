@@ -67,7 +67,7 @@
 					<a href="https://travis-ci.com/no2chem/bigint-hash"><img src="https://img.shields.io/travis/com/no2chem/bigint-hash.svg?branch=master&style=flat-square" alt="Build Status"></a>
 					<a href="https://coveralls.io/r/no2chem/bigint-hash"><img src="https://img.shields.io/coveralls/no2chem/bigint-hash.svg?style=flat-square" alt="Coverage Status"></a>
 				<img src="https://img.shields.io/node/v/bigint-hash.svg?style=flat-square" alt="node"></p>
-				<p><a href="https://www.npmjs.org/package/bigint-hash">bigint-hash</a> provides common hashing routines (MD5, SHA, SHA-2, SHA-3, Keccak) that use N-API routines to return <a href="https://github.com/tc39/proposal-bigint">TC39 Proposed BigInts</a> as digests instead of Buffers, strings or
+				<p><a href="https://www.npmjs.org/package/bigint-hash">bigint-hash</a> provides common hashing routines (MD5, SHA, SHA-2, SHA-3, Keccak, xxHash) that use N-API routines to return <a href="https://github.com/tc39/proposal-bigint">TC39 Proposed BigInts</a> as digests instead of Buffers, strings or
 					Uint8Arrays. BigInts are especially useful in the context of hashes because they can be compared 10-100x faster than
 					buffers (see <a href="https://github.com/no2chem/bigint-buffer#why-use-bigints">here</a>). In addition, bigints are
 					managed much more efficiently than Buffers, which are allocated outside the V8 heap. bigint-hash also provides routines
@@ -81,11 +81,11 @@
 					</li>
 					<li><p><strong>High performance.</strong> bigint-hash aims to be the fastest way to obtain a hash in Node.js, using N-API bindings to
 							optimized libraries whenever possible. This results in up to a 7x speedup over existing libraries, even when
-						not using bigint. See benchmarks <a href="https://github.com/no2chem/bigint-hash#performance">here</a>.</p>
+						not using bigint. With xxHash, we can hash at ~2.5M hashes/second. See benchmarks <a href="https://github.com/no2chem/bigint-hash#performance">here</a>.</p>
 					</li>
-					<li><p><strong>Support for a wide variety of hash algorithms.</strong> bigint-hash currently supports MD5 and the SHA-1, SHA-2 family of
-							hashing algorithms (with OpenSSL) and SHA-3 and Keccak (through the eXtended Keccak Code Package). More algorithms may
-						be supported in the future.</p>
+					<li><p><strong>Support for a wide variety of hash algorithms.</strong> bigint-hash currently supports MD5, the SHA-1, SHA-2 family of
+							hashing algorithms (with OpenSSL) and SHA-3 and Keccak (through the eXtended Keccak Code Package). We also now support
+						xxHash, an extremely fast non-cryptographic hash algorithm. More algorithms may be supported in the future.</p>
 					</li>
 				</ul>
 				<h1 id="usage">Usage</h1>
@@ -136,6 +136,17 @@ Fastest is biginthash-oneshot-bigint</code></pre><p><code>biginthash-oneshot-big
 				<p>There&#39;s also a significant amount of noise in the non-oneshot APIs. This is probably due to garbage collection overheads,
 					as the Hasher must allocate temporary state, the noise is probably due to garbage collection kicking in much more frequently.
 				With the oneshot API there is significantly less noise, as less garbage is generated in the first place.</p>
+				<p>Version 0.2.0 introduced support for xxHash. This provides very fast (but non-cryptographic hashes):</p>
+				<pre><code>Running xxHash64...
+xxhash-node: <span class="hljs-number">470517±8</span>.<span class="hljs-number">23</span>% ops/s <span class="hljs-number">2125</span>.<span class="hljs-number">32±697.178</span> ns/op (<span class="hljs-number">61</span> runs)
+xxhashjs-digest: <span class="hljs-number">148855±1.42</span>% ops/s <span class="hljs-number">6717</span>.<span class="hljs-number">97</span>±<span class="hljs-number">460.271</span> ns/op (<span class="hljs-number">90</span> runs)
+xxhashjs-oneshot: <span class="hljs-number">142618±2.80</span>% ops/s <span class="hljs-number">7011</span>.<span class="hljs-number">76</span>±<span class="hljs-number">927.270</span> ns/op (<span class="hljs-number">86</span> runs)
+biginthash-buf: <span class="hljs-number">423390±17</span>.<span class="hljs-number">42</span>% ops/s <span class="hljs-number">2361</span>.<span class="hljs-number">89</span>±<span class="hljs-number">1625.679</span> ns/op (<span class="hljs-number">60</span> runs)
+biginthash-bigint: <span class="hljs-number">738984±21</span>.<span class="hljs-number">47</span>% ops/s <span class="hljs-number">1353</span>.<span class="hljs-number">21±1204.176</span> ns/op (<span class="hljs-number">66</span> runs)
+biginthash-oneshot-bigint: <span class="hljs-number">2435419±1</span>.<span class="hljs-number">67</span>% ops/s <span class="hljs-number">410.61±32</span>.<span class="hljs-number">956</span> ns/op (<span class="hljs-number">89</span> runs)
+biginthash-oneshot-buffer: <span class="hljs-number">762413±11</span>.<span class="hljs-number">00</span>% ops/s <span class="hljs-number">1311</span>.<span class="hljs-number">62</span>±<span class="hljs-number">658.480</span> ns/op (<span class="hljs-number">80</span> runs)
+Fastest is biginthash-oneshot-bigint</code></pre><p>Interestingly, the bigint version is 3x more performant than the buffer version, highlighting
+				how much more buffer allocation costs over bigints.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -162,6 +173,9 @@ Fastest is biginthash-oneshot-bigint</code></pre><p><code>biginthash-oneshot-big
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/opensslhasher.html" class="tsd-kind-icon">Openssl<wbr>Hasher</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/xxhasher.html" class="tsd-kind-icon">Xx<wbr>Hasher</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/hash.html" class="tsd-kind-icon">Hash</a>
