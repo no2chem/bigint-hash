@@ -90,32 +90,32 @@
 				</ul>
 				<h1 id="usage">Usage</h1>
 				<p>Install via <a href="(https://www.npmjs.org/package/bigint-hash)">NPM</a>:</p>
-				<pre><code><span class="hljs-meta">&gt;</span><span class="bash"> npm install --save bigint-hash</span></code></pre><p>You can find API documentation <a href="https://no2chem.github.io/bigint-hash">here</a>.</p>
+				<pre><code>&gt; npm install <span class="hljs-comment">--save bigint-hash</span></code></pre><p>You can find API documentation <a href="https://no2chem.github.io/bigint-hash">here</a>.</p>
 				<p>To get a Hash instance, use the <code>getHasher</code> function with a supported hash algorithm. You can find supported
 					types in the documentation for the <a href="https://no2chem.github.io/bigint-hash/enums/hashtype.html">HashType enum</a>, or
 				you can pass most OpenSSL algorithm names (like <code>&#39;sha256&#39;</code>).</p>
-				<pre><code><span class="hljs-keyword">import</span> {getHasher, OutputType, HashType} <span class="hljs-keyword">from</span> <span class="hljs-string">'bigint-hash'</span>;
+				<pre><code>import {getHasher, OutputType, HashType} from 'bigint-hash';
 
 <span class="hljs-comment">// As with Node.js crypto API</span>
-getHasher(HashType.SHA1).update(Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>)).digest();
+get<span class="hljs-constructor">Hasher(HashType.SHA1)</span>.update(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Buffer</span>.</span></span>from('hello world')).digest<span class="hljs-literal">()</span>;
 
 <span class="hljs-comment">// To get a bigInt, use either:</span>
-getHasher(HashType.SHA1).update(Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>)).digest(OutputType.BigInt);
-getHasher(HashType.SHA1).update(Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>)).digestAsBigInt();</code></pre><p>Only hashing a single buffer? Use the one-shot API for better performance:</p>
-				<pre><code><span class="hljs-keyword">import</span> {hashAsBigInt, hashAsBuffer} <span class="hljs-keyword">from</span> <span class="hljs-string">'bigint-hash'</span>;
+get<span class="hljs-constructor">Hasher(HashType.SHA1)</span>.update(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Buffer</span>.</span></span>from('hello world')).digest(OutputType.BigInt);
+get<span class="hljs-constructor">Hasher(HashType.SHA1)</span>.update(<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Buffer</span>.</span></span>from('hello world')).digest<span class="hljs-constructor">AsBigInt()</span>;</code></pre><p>Only hashing a single buffer? Use the one-shot API for better performance:</p>
+				<pre><code>import {hashAsBigInt, hashAsBuffer} from 'bigint-hash';
 
-hashAsBigInt(HashType.SHA1, Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>));
-hashAsBuffer(HashType.SHA1, Buffer.<span class="hljs-keyword">from</span>(<span class="hljs-string">'hello world'</span>));</code></pre><h1 id="performance">Performance</h1>
+hash<span class="hljs-constructor">AsBigInt(HashType.SHA1, Buffer.<span class="hljs-params">from</span>('<span class="hljs-params">hello</span> <span class="hljs-params">world</span>')</span>);
+hash<span class="hljs-constructor">AsBuffer(HashType.SHA1, Buffer.<span class="hljs-params">from</span>('<span class="hljs-params">hello</span> <span class="hljs-params">world</span>')</span>);</code></pre><h1 id="performance">Performance</h1>
 				<p>So how does it all perform? Benchmarks can be run by using <code>npm run benchmark</code>.</p>
 				<p>For example, for SHA256:</p>
 				<pre><code>Running SHA256...
-<span class="hljs-keyword">node</span>-crypto-buf:<span class="hljs-title"> 274981</span>±<span class="hljs-number">6.02</span>% ops/s <span class="hljs-number">3636.62</span>±<span class="hljs-number">893.055</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">64</span> runs)
-<span class="hljs-keyword">node</span>-crypto-bigint:<span class="hljs-title"> 267242</span>±<span class="hljs-number">5.91</span>% ops/s <span class="hljs-number">3741.93</span>±<span class="hljs-number">930.464</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">68</span> runs)
-biginthash-buf: <span class="hljs-number">403311</span>±<span class="hljs-number">13.51</span>% ops/s <span class="hljs-number">2479.48</span>±<span class="hljs-number">1439.719</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">71</span> runs)
-biginthash-bigint: <span class="hljs-number">505348</span>±<span class="hljs-number">34.12</span>% ops/s <span class="hljs-number">1978.83</span>±<span class="hljs-number">2733.946</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">63</span> runs)
-biginthash-oneshot-bigint: <span class="hljs-number">1010083</span>±<span class="hljs-number">0.65</span>% ops/s <span class="hljs-number">990.02</span>±<span class="hljs-number">31.829</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">93</span> runs)
-biginthash-oneshot-buffer: <span class="hljs-number">591309</span>±<span class="hljs-number">1.96</span>% ops/s <span class="hljs-number">1691.16</span>±<span class="hljs-number">155.995</span> ns/<span class="hljs-keyword">op</span> (<span class="hljs-number">85</span> runs)
-Fastest is biginthash-oneshot-bigint</code></pre><p>Here, <code>node-crypto-buf</code> is the standard Node.js API, and <code>node-crypto-bigint</code> is that same API
+node-crypto-buf: <span class="hljs-number">274981</span>±<span class="hljs-number">6.02</span>% ops/s <span class="hljs-number">3636.62</span>±<span class="hljs-number">893.055</span> ns/op (<span class="hljs-number">64</span> runs)
+node-crypto-bigint: <span class="hljs-number">267242</span>±<span class="hljs-number">5.91</span>% ops/s <span class="hljs-number">3741.93</span>±<span class="hljs-number">930.464</span> ns/op (<span class="hljs-number">68</span> runs)
+biginthash-buf: <span class="hljs-number">403311</span>±<span class="hljs-number">13.51</span>% ops/s <span class="hljs-number">2479.48</span>±<span class="hljs-number">1439.719</span> ns/op (<span class="hljs-number">71</span> runs)
+biginthash-bigint: <span class="hljs-number">505348</span>±<span class="hljs-number">34.12</span>% ops/s <span class="hljs-number">1978.83</span>±<span class="hljs-number">2733.946</span> ns/op (<span class="hljs-number">63</span> runs)
+biginthash-oneshot-bigint: <span class="hljs-number">1010083</span>±<span class="hljs-number">0.65</span>% ops/s <span class="hljs-number">990.02</span>±<span class="hljs-number">31.829</span> ns/op (<span class="hljs-number">93</span> runs)
+biginthash-oneshot-buffer: <span class="hljs-number">591309</span>±<span class="hljs-number">1.96</span>% ops/s <span class="hljs-number">1691.16</span>±<span class="hljs-number">155.995</span> ns/op (<span class="hljs-number">85</span> runs)
+Fastest <span class="hljs-keyword">is</span> biginthash-oneshot-bigint</code></pre><p>Here, <code>node-crypto-buf</code> is the standard Node.js API, and <code>node-crypto-bigint</code> is that same API
 				with the overhead of converting to a bigint (using <a href="https://github.com/no2chem/bigint-buffer">bigint-buffer</a>).</p>
 				<p>Doing the conversion to bigint natively, <code>biginthash-bigint</code>, results in 1.8x better performance. Interestingly,
 					<code>biginthash-buf</code>, which calls OpenSSL and should perform the same as <code>node-crypto-buf</code>, performs 1.4x better, which
@@ -124,13 +124,13 @@ Fastest is biginthash-oneshot-bigint</code></pre><p>Here, <code>node-crypto-buf<
 				allocate an external context to hold hashing state and schedule garbage collection.</p>
 				<p>For SHA3, we compare against the widely used <a href="https://github.com/cryptocoinjs/keccak">keecak</a> library.</p>
 				<pre><code>Running SHA3_256...
-sha3-buf: <span class="hljs-number">140667±13.36</span>% ops/s <span class="hljs-number">7108</span>.<span class="hljs-number">97</span>±<span class="hljs-number">4278.996</span> ns/op (<span class="hljs-number">78</span> runs)
-sha3-bigint: <span class="hljs-number">146018±1.24</span>% ops/s <span class="hljs-number">6848</span>.<span class="hljs-number">49</span>±<span class="hljs-number">395.861</span> ns/op (<span class="hljs-number">84</span> runs)
-biginthash-buf: <span class="hljs-number">365119±8.46</span>% ops/s <span class="hljs-number">2738</span>.<span class="hljs-number">83±1010.152</span> ns/op (<span class="hljs-number">73</span> runs)
-biginthash-bigint: <span class="hljs-number">450430±29</span>.<span class="hljs-number">27</span>% ops/s <span class="hljs-number">2220</span>.<span class="hljs-number">10±2652.172</span> ns/op (<span class="hljs-number">64</span> runs)
-biginthash-oneshot-bigint: <span class="hljs-number">1010901±0</span>.<span class="hljs-number">34</span>% ops/s <span class="hljs-number">989.22±16</span>.<span class="hljs-number">845</span> ns/op (<span class="hljs-number">94</span> runs)
-biginthash-oneshot-buffer: <span class="hljs-number">584744±1</span>.<span class="hljs-number">52</span>% ops/s <span class="hljs-number">1710.15±123</span>.<span class="hljs-number">457</span> ns/op (<span class="hljs-number">87</span> runs)
-Fastest is biginthash-oneshot-bigint</code></pre><p><code>biginthash-oneshot-bigint</code> performs 7x faster than the <code>sha3-buf</code>, which just uses the <code>keccak</code> library. 
+sha3-buf: <span class="hljs-number">140667</span>±<span class="hljs-number">13.36</span>% ops/s <span class="hljs-number">7108.97</span>±<span class="hljs-number">4278.996</span> ns/op (<span class="hljs-number">78</span> runs)
+sha3-bigint: <span class="hljs-number">146018</span>±<span class="hljs-number">1.24</span>% ops/s <span class="hljs-number">6848.49</span>±<span class="hljs-number">395.861</span> ns/op (<span class="hljs-number">84</span> runs)
+biginthash-buf: <span class="hljs-number">365119</span>±<span class="hljs-number">8.46</span>% ops/s <span class="hljs-number">2738.83</span>±<span class="hljs-number">1010.152</span> ns/op (<span class="hljs-number">73</span> runs)
+biginthash-bigint: <span class="hljs-number">450430</span>±<span class="hljs-number">29.27</span>% ops/s <span class="hljs-number">2220.10</span>±<span class="hljs-number">2652.172</span> ns/op (<span class="hljs-number">64</span> runs)
+biginthash-oneshot-bigint: <span class="hljs-number">1010901</span>±<span class="hljs-number">0.34</span>% ops/s <span class="hljs-number">989.22</span>±<span class="hljs-number">16.845</span> ns/op (<span class="hljs-number">94</span> runs)
+biginthash-oneshot-buffer: <span class="hljs-number">584744</span>±<span class="hljs-number">1.52</span>% ops/s <span class="hljs-number">1710.15</span>±<span class="hljs-number">123.457</span> ns/op (<span class="hljs-number">87</span> runs)
+Fastest <span class="hljs-keyword">is</span> biginthash-oneshot-bigint</code></pre><p><code>biginthash-oneshot-bigint</code> performs 7x faster than the <code>sha3-buf</code>, which just uses the <code>keccak</code> library. 
 					Even <code>biginthash-buf</code> performs 2.6x better than <code>sha3-buf</code>. This is because bigint-hash uses an optimized version
 				from the eXtended Keccak Code Package, while keccak uses the reference implementation.</p>
 				<p>There&#39;s also a significant amount of noise in the non-oneshot APIs. This is probably due to garbage collection overheads,
@@ -138,14 +138,14 @@ Fastest is biginthash-oneshot-bigint</code></pre><p><code>biginthash-oneshot-big
 				With the oneshot API there is significantly less noise, as less garbage is generated in the first place.</p>
 				<p>Version 0.2.0 introduced support for xxHash. This provides very fast (but non-cryptographic hashes):</p>
 				<pre><code>Running xxHash64...
-xxhash-node: <span class="hljs-number">470517±8</span>.<span class="hljs-number">23</span>% ops/s <span class="hljs-number">2125</span>.<span class="hljs-number">32±697.178</span> ns/op (<span class="hljs-number">61</span> runs)
-xxhashjs-digest: <span class="hljs-number">148855±1.42</span>% ops/s <span class="hljs-number">6717</span>.<span class="hljs-number">97</span>±<span class="hljs-number">460.271</span> ns/op (<span class="hljs-number">90</span> runs)
-xxhashjs-oneshot: <span class="hljs-number">142618±2.80</span>% ops/s <span class="hljs-number">7011</span>.<span class="hljs-number">76</span>±<span class="hljs-number">927.270</span> ns/op (<span class="hljs-number">86</span> runs)
-biginthash-buf: <span class="hljs-number">423390±17</span>.<span class="hljs-number">42</span>% ops/s <span class="hljs-number">2361</span>.<span class="hljs-number">89</span>±<span class="hljs-number">1625.679</span> ns/op (<span class="hljs-number">60</span> runs)
-biginthash-bigint: <span class="hljs-number">738984±21</span>.<span class="hljs-number">47</span>% ops/s <span class="hljs-number">1353</span>.<span class="hljs-number">21±1204.176</span> ns/op (<span class="hljs-number">66</span> runs)
-biginthash-oneshot-bigint: <span class="hljs-number">2435419±1</span>.<span class="hljs-number">67</span>% ops/s <span class="hljs-number">410.61±32</span>.<span class="hljs-number">956</span> ns/op (<span class="hljs-number">89</span> runs)
-biginthash-oneshot-buffer: <span class="hljs-number">762413±11</span>.<span class="hljs-number">00</span>% ops/s <span class="hljs-number">1311</span>.<span class="hljs-number">62</span>±<span class="hljs-number">658.480</span> ns/op (<span class="hljs-number">80</span> runs)
-Fastest is biginthash-oneshot-bigint</code></pre><p>Interestingly, the bigint version is 3x more performant than the buffer version, highlighting
+xxhash-node: <span class="hljs-number">470517</span>±<span class="hljs-number">8.23</span>% ops/s <span class="hljs-number">2125.32</span>±<span class="hljs-number">697.178</span> ns/op (<span class="hljs-number">61</span> runs)
+xxhashjs-digest: <span class="hljs-number">148855</span>±<span class="hljs-number">1.42</span>% ops/s <span class="hljs-number">6717.97</span>±<span class="hljs-number">460.271</span> ns/op (<span class="hljs-number">90</span> runs)
+xxhashjs-oneshot: <span class="hljs-number">142618</span>±<span class="hljs-number">2.80</span>% ops/s <span class="hljs-number">7011.76</span>±<span class="hljs-number">927.270</span> ns/op (<span class="hljs-number">86</span> runs)
+biginthash-buf: <span class="hljs-number">423390</span>±<span class="hljs-number">17.42</span>% ops/s <span class="hljs-number">2361.89</span>±<span class="hljs-number">1625.679</span> ns/op (<span class="hljs-number">60</span> runs)
+biginthash-bigint: <span class="hljs-number">738984</span>±<span class="hljs-number">21.47</span>% ops/s <span class="hljs-number">1353.21</span>±<span class="hljs-number">1204.176</span> ns/op (<span class="hljs-number">66</span> runs)
+biginthash-oneshot-bigint: <span class="hljs-number">2435419</span>±<span class="hljs-number">1.67</span>% ops/s <span class="hljs-number">410.61</span>±<span class="hljs-number">32.956</span> ns/op (<span class="hljs-number">89</span> runs)
+biginthash-oneshot-buffer: <span class="hljs-number">762413</span>±<span class="hljs-number">11.00</span>% ops/s <span class="hljs-number">1311.62</span>±<span class="hljs-number">658.480</span> ns/op (<span class="hljs-number">80</span> runs)
+Fastest <span class="hljs-keyword">is</span> biginthash-oneshot-bigint</code></pre><p>Interestingly, the bigint version is 3x more performant than the buffer version, highlighting
 				how much more buffer allocation costs over bigints.</p>
 			</div>
 		</div>
