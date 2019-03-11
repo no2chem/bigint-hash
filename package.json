@@ -93,6 +93,7 @@
     "ext/xkcp/lib/low/KeccakP-1600/Optimized64/LCufullshld",
     "ext/xkcp/lib/low/KeccakP-1600/Optimized",
     "ext/xkcp/lib/low/common",
+    "ext/xxHash",
     "src/*.c",
     "binding.gyp"
   ],
